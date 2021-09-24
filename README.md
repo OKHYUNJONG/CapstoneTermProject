@@ -1,2 +1,0 @@
-# CapstomTermProject
-Hotmoa Team TermProject
