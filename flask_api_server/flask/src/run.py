@@ -107,7 +107,7 @@ def get_posts(querydate):
     print(f'response after {end_time - start_time}')
     return jsonify(result)
 
-#example input: /termposts//2021053120210603 처럼 0 포함
+#example input: /termposts/2021053120210603 처럼 0 포함
 @app.route('/termposts/<querydate>')
 def get_termposts(querydate):
     start_time = time.time()
