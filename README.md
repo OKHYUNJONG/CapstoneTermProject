@@ -50,23 +50,23 @@ React.js를 이용하여 백엔드에서 구현한 api를 이용해 프론트엔
 
 #### 로그인
 새로운 유저 회원가입, 기존 회원 로그인, 구글 계정으로 로그인 등을 구현하였음.
-![image](https://user-images.githubusercontent.com/49023654/146391898-eb9911a4-d08b-450a-8f54-1803aef12af2.png)
+
 
 #### 홈 화면
 어제자로 올라온 핫딜 게시글을 보여주는 화면을 구현하였음.
-![image](https://user-images.githubusercontent.com/49023654/146391930-60735a7b-0058-49a1-8df9-93f3e681755d.png)
+
 
 #### 관심 카테고리 화면
 유저가 설정한 관심 카테고리를 기준으로 유저가 선택하면 해당 카테고리만 필터링하여 보여주는 화면을 구현하였음.
-![image](https://user-images.githubusercontent.com/49023654/146392130-55568573-ac48-44ff-927c-72ccf70011ea.png)
+
 
 #### 디테일 화면
 특정 물품에 대한 게시글을 클릭하면 해당 게시글에 대한 세부 정보를 볼 수 있는 화면을 구현하였음.
-![image](https://user-images.githubusercontent.com/49023654/146392310-908da976-0ac1-40ae-aa9b-ae810b4441ae.png)
+
 
 #### 프로필 설정
 로그아웃 및 관심 카테고리 선택, 저장을 구현하였음.
-![image](https://user-images.githubusercontent.com/49023654/146392005-76b6b061-c047-4dce-a287-7d95a2f5ee41.png)
+
 
 
 ## Conclusion
