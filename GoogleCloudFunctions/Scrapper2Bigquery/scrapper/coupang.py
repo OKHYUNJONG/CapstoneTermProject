@@ -15,8 +15,8 @@ URL = "/v2/providers/affiliate_open_api/apis/openapi/v1/deeplink"
 
 
 # Replace with your own ACCESS_KEY and SECRET_KEY
-ACCESS_KEY = "53ec2472-bfde-44fb-8c61-c62a9f1b35c0"
-SECRET_KEY = "ebbfd552402a20b27e7b3dc4a1c9dfa3f922c599"
+ACCESS_KEY = "내 키"
+SECRET_KEY = "내 키"
 
 
 def generateHmac(method, url, secretKey, accessKey):
