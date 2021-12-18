@@ -33,16 +33,115 @@
 |  앱 및 웹 서비스 구현 및 시각화       |       |       |    O   |    O   | 
 
 ## Results
-* Main code, table, graph, comparison, ...
-* Web link
 
-``` C++
-void Example(int x, int y) {
-   ...  
-   ... // comment
-   ...
-}
+### 모델 ( 세부분류 모델 )  
+
+#### 목적
+<img width="900" alt="스크린샷 2021-12-18 오후 7 02 14" src="https://user-images.githubusercontent.com/49023718/146637128-fbb5dfd1-ca64-4fec-8f96-f1a833c5d048.png">
+
+<img width="900" alt="스크린샷 2021-12-18 오후 7 02 26" src="https://user-images.githubusercontent.com/49023718/146637133-4a08f38b-e12a-42c6-913a-00d43a39387f.png">
+세부분류를 통해 보기 편한 서비스 제공
+
+### Code (경로 Models/DetailClassifyModels )
+#### PreProcessing+Model.ipynb
+
+* 디지털 카테고리 32개로 세분화 라벨링 작업  
+* Train/Valid 4:1 Split
+* Fasttext, Kor-bert-base, Funnel-kor-base, Ko-gpt2 등 여러모델 Baseline작성 및 실험을 통해 BestModel 선정 -> Kor-bert-base  
+  
+(%)|Fasttext (Ngrams=2, epoch=120, lr=0.1|kor-bert-base(No upsampling) | kor-bert-base(Upsampling)|Funnel-kor-base(Upsampling)|Ko-gpt2(No upsampling)| albert(No upsampling) |
+---|---|---|---|---|---|---|
+`validate acc` | 0.804 | 0.902 | 0.895 | 0.902 | 0.881 | 0.888 |  
+  
+* 전처리 및 EDA  : best MAX input length 설정, 특수문자(기호) 제거
+  <img width="600" alt="스크린샷 2021-12-17 오후 5 48 11" src="https://user-images.githubusercontent.com/49023718/146637365-66fd2bac-b256-4385-b411-770a2dfae8f9.png">
+    
+  위와 같은 Text length 분포를 보여 64로 MAX input Length를 설정  
+  
+```Python
+import re
+s1 = re.compile('1+1')
+s2 = re.compile('역대가')
+s3 = re.compile('특가')
+s4 = re.compile('모음집')
+s5 = re.compile('모음전')
+p = re.compile('[\!@#$%\^&\*\(\)\-\=\[\]\{\}\.,/\?~\+\'"|_:;><`┃…]')
+
+def remove_characters(sentence, lower=True):
+    sentence = s1.sub(' ', str(sentence))
+    sentence = p.sub(' ', sentence) 
+    sentence = s1.sub(' ', sentence)
+    sentence = s2.sub(' ', sentence)
+    sentence = s3.sub(' ', sentence)
+    sentence = s4.sub(' ', sentence)
+    sentence = s51.sub(' ', sentence)
+    sentence = ' '.join(sentence.split())
+    if lower:
+        sentence = sentence.lower()
+    return sentence
+
+train_df['title'] = train_df['title'].map(remove_characters)
+train_df.head()
 ```
+특수문자와 성능에 방해가 될거 같은 단어 (모든 라벨에 중복되는 자주 나오는 단어) 제거
+
+ 
+* Data Augmenatation :  Back-Translation (경로 Translation 참고 ) 를 파파고 api를 활용해 구현, Pseudo Labeling을 통해 Labeling되지 않은 데이터 이용
+* Optimizer: Adamw , Loss: CrossEntropyLoss, Schedular: CosineAnnealingWarmupRestarts
+
+하나의 폴드당 Baseline 대비 성능차이   
+   
+(%)|kor-bert-base(Baseline)| kor-bert-base(Final Model- 1fold) |  
+---|---|---|  
+`validate acc` | 0.902 | 0.934 |    
+
+* 5-Fold CrossValidation ensemble  
+
+#### DistilBert.ipynb
+
+* Teacher -> kor-bert-base 5-Fold CrossValidation ensemble  ( 12 hidden layers)
+* Student -> small kor-bert-base (4 hidden layers)
+* Model Size:  Teacher (450MB) -> Student (220 MB)
+```Python
+# targets = real target, targets2 = kor-bert-base 5-Fold CrossValidation ensemble model predict 
+# loss_fn = CrossEntropyLoss
+loss = loss_fn(outputs, targets) + loss_fn(outputs, targets2)
+```
+아쉬운점: 성능은 따로 Test데이터를 라벨링하려고 했는데 시간상 하지못하여 검증은 못함  
+-> Train에서는 정확도가 높았고, 일부 Sample로 테스트 했을때 잘 작동
+
+### 모델 ( 유사도모델 ) 
+#### 목적
+<img width="900" alt="스크린샷 2021-12-18 오후 7 40 03" src="https://user-images.githubusercontent.com/49023718/146638133-6de3b7b2-dcc0-452d-b914-e0c72e7a3bc5.png">
+
+### Code (경로 Models/SimilarityModel )
+#### 유사도모델.ipynb
+* 제목에 TF-IDF를 분석해 각각의 row마다 가장 유사한 text를 찾기
+* 이를 통해 핫딜 판매처 (쿠팡, 11번가 등), 가격 범위 (오차범위 고려하여)를 고려하여 같으면 제거
+```Python
+import re
+sameproduct = []
+for j in range(10):
+  products = get_recommendations(df_full.loc[j,"title"])
+  products.reset_index(inplace=True)
+  for i in range(len(products)):
+    try :
+      if re.sub(r'[^0-9]', '', products.loc[i,"price"]) == "":
+        price1 = 0
+      else:
+        price1 = int(re.sub(r'[^0-9]', '', products.loc[i,"price"]))
+      if re.sub(r'[^0-9]', '', df_full.loc[j,"price"]) == "":
+        price2 = 0
+      else:
+        price2 = int(re.sub(r'[^0-9]', '', df_full.loc[j,"price"]))
+    except:
+      continue
+    if products.loc[i,"hotdeal_place"] == df_full.loc[j,"hotdeal_place"] and abs(((price1 - price2) // price2))< 0.05 and :
+      sameproduct += [[products.loc[i,"title"],df_full.loc[j,"title"]]]
+```
+
+### 백엔드
+<img width="1197" alt="스크린샷 2021-12-18 오후 7 50 49" src="https://user-images.githubusercontent.com/49023718/146638373-05c3bc93-93d3-4ec5-85a5-19bf955a112a.png">
 
 
 ### 프론트엔드
@@ -70,8 +169,17 @@ React.js를 이용하여 백엔드에서 구현한 api를 이용해 프론트엔
 
 
 ## Conclusion
-* Summary, contribution, ...
+### Model Part
+* 라벨링 작업에 상당한 시간이 소요
+* 라벨링 작업에 한계로 부족한 데이터를 BackTranslation, Pseudo Labeling을 통해 해결
+* 위에 2가지 기법을 포함하여 그 밖에 여러가지 실험을 통해 첫 Fasttext Baseline 0.804 -> Final Kor-Bert-Base 0.934 까지 성능 향상
+* 다소 큰 모델 사이즈 (450MB)를 Teacher - Student(DistilBert) 기법을 이용해 250MB로 감소시킴
+* 유사도 모델을 구현하였으나 검증과 실제 서비스에 적용은 시간관계상 하지못함 ( 일부 Test 샘플로 Test해본결과 동일 글 잘 감지 )
 
+### Backend Part
+* GoogleCloudFunction을 통해 게시글을 스크래핑하고 모델에 적용하여 SQL로 보내는 전체 과정을 구현
+* SQL을 프론트엔드에게 URL로 전달하기 위해 Flask를 활용한 API Server 구현하고 EC2에 Docker와 Nginx로 배포
+   
 ## Reports
 * Upload or link (e.g. Google Drive files with share setting)
 * Midterm: [Report](Reports/Midterm.pdf)
