@@ -89,6 +89,7 @@ train_df.head()
 `validate acc` | 0.902 | 0.934 |    
 
 * 5-Fold CrossValidation ensemble  
+<img width="1000" alt="스크린샷 2021-12-18 오후 7 22 34" src="https://user-images.githubusercontent.com/49023718/146648777-b7ab1fd9-ed09-4df8-9654-3deb2abdad69.png">
 
 #### DistilBert.ipynb
 
