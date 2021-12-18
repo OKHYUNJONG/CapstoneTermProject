@@ -1,4 +1,4 @@
-# 핫모아 프로젝트(Hotmoa) (Capstone design 2021-2)
+# 커뮤니티 핫딜 게시판 기반 상품 모음 웹(Hotmoa) (Capstone design 2021-2)
 * 2019102109 옥현종, 2019102111 유종석
 
 ## Overview
