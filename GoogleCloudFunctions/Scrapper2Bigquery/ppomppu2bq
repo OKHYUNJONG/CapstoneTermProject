@@ -1,0 +1,41 @@
+import base64
+import json
+from google.cloud import bigquery
+
+
+def hello_pubsub(event, context):
+    """Triggered from a message on a Cloud Pub/Sub topic.
+    Args:
+         event (dict): Event payload.
+         context (google.cloud.functions.Context): Metadata for the event.
+    """
+    pubsub_message = base64.b64decode(event['data']).decode('utf-8')
+    print(pubsub_message)
+    ppomppu_to_bq(pubsub_message)
+
+def ppomppu_to_bq(ppomppu):
+ client = bigquery.Client()
+ dataset_ref = client.dataset('writtens')
+ table_ref = dataset_ref.table('posts')
+ table = client.get_table(table_ref)
+ ppomppu_dict = json.loads(ppomppu)
+ rows_to_insert = [(ppomppu_dict['id'], 
+ ppomppu_dict['title'], 
+ ppomppu_dict['category'],
+ ppomppu_dict['product_name'],
+ ppomppu_dict['price'],
+ ppomppu_dict['shopping_fee'],
+ ppomppu_dict['hotdeal_place'],
+ ppomppu_dict['link'],
+ ppomppu_dict['img_url'], 
+ ppomppu_dict['shop_url'], 
+ ppomppu_dict['text'],
+ ppomppu_dict['date'],
+ ppomppu_dict['time'])]
+
+
+ error = client.insert_rows(table, rows_to_insert)
+ print(error)
+
+
+
