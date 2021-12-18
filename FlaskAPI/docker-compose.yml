@@ -1,0 +1,20 @@
+version: '3'
+services:
+  flask:
+      container_name: flask
+      image: "r7play/flask:1.0"
+      ports:
+       - "5000:5000"
+      networks:
+      - backend
+  nginx:
+      container_name: nginx
+      image: "r7play/nginx:1.0"
+      ports:
+       - "80:80"
+      networks:
+       - backend
+
+networks:
+  backend:
+    driver: bridge
