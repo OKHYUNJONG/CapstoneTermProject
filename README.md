@@ -147,24 +147,30 @@ for j in range(10):
 ### 프론트엔드
 React.js를 이용하여 백엔드에서 구현한 api를 이용해 프론트엔드 작성을 통해 실제 애플리케이션을 구현하였음.
 
+
 #### 로그인
 새로운 유저 회원가입, 기존 회원 로그인, 구글 계정으로 로그인 등을 구현하였음.
+![image](https://user-images.githubusercontent.com/49023654/146641593-6e8a2cf6-a93a-448a-ac64-683e02c73fda.png)
 
 
 #### 홈 화면
 어제자로 올라온 핫딜 게시글을 보여주는 화면을 구현하였음.
+![image](https://user-images.githubusercontent.com/49023654/146641615-ff548481-1bc1-4e47-bde8-ac0492fc4dcf.png)
 
 
 #### 관심 카테고리 화면
 유저가 설정한 관심 카테고리를 기준으로 유저가 선택하면 해당 카테고리만 필터링하여 보여주는 화면을 구현하였음.
+![image](https://user-images.githubusercontent.com/49023654/146641633-a41afcc8-4131-4720-9f24-55447a972c53.png)
 
 
 #### 디테일 화면
 특정 물품에 대한 게시글을 클릭하면 해당 게시글에 대한 세부 정보를 볼 수 있는 화면을 구현하였음.
+![image](https://user-images.githubusercontent.com/49023654/146641647-f8aa6aa5-7cd0-475c-aa90-7536c1bef036.png)
 
 
 #### 프로필 설정
 로그아웃 및 관심 카테고리 선택, 저장을 구현하였음.
+![image](https://user-images.githubusercontent.com/49023654/146641656-10074dac-11b1-4308-9bf2-135c7980b350.png)
 
 
 
@@ -179,6 +185,10 @@ React.js를 이용하여 백엔드에서 구현한 api를 이용해 프론트엔
 ### Backend Part
 * GoogleCloudFunction을 통해 게시글을 스크래핑하고 모델에 적용하여 SQL로 보내는 전체 과정을 구현
 * SQL을 프론트엔드에게 URL로 전달하기 위해 Flask를 활용한 API Server 구현하고 EC2에 Docker와 Nginx로 배포
+
+### Frontend Part
+* Firebase를 이용한 로그인 기능 및 유저 관심 카테고리 데이터베이스 구축
+* React를 이용해 Backend 데이터 시각화 및 주요 기능 구현
    
 ## Reports
 * Upload or link (e.g. Google Drive files with share setting)
