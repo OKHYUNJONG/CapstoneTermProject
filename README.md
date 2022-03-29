@@ -49,7 +49,7 @@
 * 전처리 및 EDA  : best MAX input length 설정, 특수문자(기호) 제거
   <img width="600" alt="스크린샷 2021-12-17 오후 5 48 11" src="https://user-images.githubusercontent.com/49023718/146637365-66fd2bac-b256-4385-b411-770a2dfae8f9.png">
     
-  위와 같은 Text length 분포를 보여 64로 MAX input Length를 설정  
+  위와 같은 Text length 분포를 보여 MAX input Length를 작게 설정  
   
 ```Python
 import re
